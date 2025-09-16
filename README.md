@@ -47,7 +47,7 @@ It also provides a video feed, audio interaction, text-to-speech, and database l
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/your-username/emotion-aware-conversational-ai.git
+git clone (https://github.com/Arfasil/Multimodel-emotion-detection.git)
 cd emotion-aware-conversational-ai
 2️⃣ Create a virtual environment & install dependencies
 bash
