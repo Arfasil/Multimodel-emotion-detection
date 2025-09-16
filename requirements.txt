@@ -1,0 +1,14 @@
+Flask
+opencv-python
+deepface
+numpy
+tensorflow
+librosa
+google-generativeai
+SpeechRecognition
+pyttsx3
+Werkzeug
+Pillow
+scipy
+soundfile
+pyaudio
