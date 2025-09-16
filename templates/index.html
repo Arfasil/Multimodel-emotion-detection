@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Emotion AI Voice Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto auto;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-section {
+            position: relative;
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: #000;
+            width: 100%;
+            height: 320px;
+            margin-bottom: 15px;
+        }
+
+        #video-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-ready { background-color: #4CAF50; }
+        .status-detecting { background-color: #FF9800; }
+        .status-error { background-color: #f44336; }
+        .status-waiting { background-color: #2196F3; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .emotion-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .emotion-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .emotion-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .emotion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .emotion-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .emotion-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-transform: capitalize;
+            color: #4CAF50;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .emotion-confidence {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .session-info {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .controls-section {
+            grid-column: span 2;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .mic-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-button:hover:not(.disabled) {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.5);
+        }
+
+        .mic-button.recording {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            animation: recordPulse 1.5s infinite;
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+        }
+
+        .mic-button.processing {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            animation: processSpin 2s linear infinite;
+        }
+
+        .mic-button.disabled {
+            background: linear-gradient(135deg, #666, #555);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes recordPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 20px 60px rgba(76, 175, 80, 0.6); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes processSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .mic-status {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            min-height: 30px;
+        }
+
+        .conversation-section {
+            grid-column: span 2;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .conversation-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conversation-history {
+            padding: 20px 25px;
+        }
+
+        .conversation-item {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            animation: fadeInUp 0.5s ease;
+            position: relative;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            margin-left: 60px;
+            text-align: right;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .bot-message {
+            background: linear-gradient(135deg, #10b981, #059669);
+            margin-right: 60px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .message-emotions {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ffcdd2;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #c8e6c9;
+        }
+
+        .alert-info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #bbdefb;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 2s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats-section {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .session-info, .stats-section {
+                grid-column: span 1;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .controls-section,
+            .conversation-section {
+                grid-column: span 1;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .mic-button {
+                width: 100px;
+                height: 100px;
+                font-size: 2rem;
+            }
+            
+            .user-message {
+                margin-left: 20px;
+            }
+            
+            .bot-message {
+                margin-right: 20px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .conversation-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .conversation-section::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .conversation-section::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .conversation-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Enhanced Emotion AI Assistant</h1>
+            <p class="subtitle">Advanced AI with continuous emotion tracking and 15-second database updates</p>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Video Feed Section -->
+            <div class="glass-card video-section">
+                <div class="video-container">
+                    <img id="video-feed" src="/video_feed" alt="Video Feed">
+                    <div class="video-overlay" id="video-overlay">
+                        <div id="detection-status">
+                            <span class="status-indicator status-detecting"></span>
+                            <span>Initializing emotion detection<span class="loading-dots"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="control-btn" id="refresh-video">🔄 Refresh Video</button>
+                    <button class="control-btn" id="toggle-overlay">👁️ Toggle Overlay</button>
+                </div>
+            </div>
+
+            <!-- Emotion Display Section -->
+            <div class="glass-card emotion-panel">
+                <h3 style="margin-bottom: 20px; text-align: center; font-size: 1.4rem;">🎭 Current Emotions</h3>
+                
+                <div class="emotion-card">
+                    <div class="emotion-header">
+                        <span class="emotion-label">
+                            😊 <span>Face Emotion</span>
+                        </span>
+                        <span class="emotion-value" id="face-emotion">Detecting...</span>
+                    </div>
+                    <div class="emotion-confidence" id="face-confidence">Confidence: --</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="face-confidence-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="emotion-card">
+                    <div class="emotion-header">
+                        <span class="emotion-label">
+                            🎤 <span>Voice Emotion</span>
+                        </span>
+                        <span class="emotion-value" id="voice-emotion">Waiting...</span>
+                    </div>
+                    <div class="emotion-confidence" id="voice-confidence">Confidence: --</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="voice-confidence-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Info -->
+            <div class="session-info">
+                <div class="glass-card info-item">
+                    <span class="info-value" id="session-id">Not Started</span>
+                    <span class="info-label">Session ID</span>
+                </div>
+                <div class="glass-card info-item">
+                    <span class="info-value" id="message-count">0</span>
+                    <span class="info-label">Messages</span>
+                </div>
+                <div class="glass-card info-item">
+                    <span class="info-value" id="session-time">00:00</span>
+                    <span class="info-label">Session Time</span>
+                </div>
+                <div class="glass-card info-item">
+                    <span class="info-value" id="face-updates">0</span>
+                    <span class="info-label">Face Updates</span>
+                </div>
+            </div>
+
+            <!-- Voice Controls -->
+            <div class="glass-card controls-section">
+                <div class="mic-container tooltip">
+                    <button id="mic-button" class="mic-button disabled" disabled>
+                        🎤
+                    </button>
+                    <span class="tooltiptext">Click to start/stop recording</span>
+                </div>
+                <div class="mic-status" id="mic-status">
+                    Waiting for face detection to complete...
+                </div>
+                <div class="control-buttons">
+                    <button class="control-btn" id="clear-conversation" disabled>🗑️ Clear Chat</button>
+                    <button class="control-btn" id="download-conversation" disabled>💾 Download</button>
+                    <button class="control-btn" id="reset-session" disabled>🔄 Reset Session</button>
+                    <button class="control-btn" id="view-stats" disabled>📊 View Stats</button>
+                </div>
+            </div>
+
+            <!-- Session Statistics -->
+            <div class="stats-section" id="stats-section" style="display: none;">
+                <div class="glass-card info-item">
+                    <span class="info-value" id="most-frequent-emotion">--</span>
+                    <span class="info-label">Most Frequent Emotion</span>
+                </div>
+                <div class="glass-card info-item">
+                    <span class="info-value" id="session-duration">--</span>
+                    <span class="info-label">Session Duration</span>
+                </div>
+                <div class="glass-card info-item">
+                    <span class="info-value" id="tracking-updates">--</span>
+                    <span class="info-label">Tracking Updates</span>
+                </div>
+            </div>
+
+            <!-- Conversation Area -->
+            <div class="glass-card conversation-section" id="conversation-section" style="display: none;">
+                <div class="conversation-header">
+                    <h3>💬 Conversation History</h3>
+                    <span id="conversation-status">Ready</span>
+                </div>
+                <div class="conversation-history" id="conversation-history">
+                    <!-- Conversation items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EmotionAI {
+            constructor() {
+                this.isRecording = false;
+                this.isProcessing = false;
+                this.mediaRecorder = null;
+                this.audioChunks = [];
+                this.conversationStarted = false;
+                this.sessionId = null;
+                this.messageCount = 0;
+                this.faceUpdateCount = 0;
+                this.sessionStartTime = null;
+                this.sessionTimer = null;
+                this.overlayVisible = true;
+                this.statsVisible = false;
+                
+                // DOM Elements
+                this.micButton = document.getElementById('mic-button');
+                this.micStatus = document.getElementById('mic-status');
+                this.faceEmotionEl = document.getElementById('face-emotion');
+                this.voiceEmotionEl = document.getElementById('voice-emotion');
+                this.faceConfidenceEl = document.getElementById('face-confidence');
+                this.voiceConfidenceEl = document.getElementById('voice-confidence');
+                this.faceConfidenceBar = document.getElementById('face-confidence-bar');
+                this.voiceConfidenceBar = document.getElementById('voice-confidence-bar');
+                this.detectionStatus = document.getElementById('detection-status');
+                this.conversationSection = document.getElementById('conversation-section');
+                this.conversationHistory = document.getElementById('conversation-history');
+                this.sessionIdEl = document.getElementById('session-id');
+                this.messageCountEl = document.getElementById('message-count');
+                this.sessionTimeEl = document.getElementById('session-time');
+                this.faceUpdatesEl = document.getElementById('face-updates');
+                this.conversationStatus = document.getElementById('conversation-status');
+                this.statsSection = document.getElementById('stats-section');
+                
+                // Control buttons
+                this.refreshVideoBtn = document.getElementById('refresh-video');
+                this.toggleOverlayBtn = document.getElementById('toggle-overlay');
+                this.clearConversationBtn = document.getElementById('clear-conversation');
+                this.downloadConversationBtn = document.getElementById('download-conversation');
+                this.resetSessionBtn = document.getElementById('reset-session');
+                this.viewStatsBtn = document.getElementById('view-stats');
+                
+                // Stats elements
+                this.mostFrequentEmotionEl = document.getElementById('most-frequent-emotion');
+                this.sessionDurationEl = document.getElementById('session-duration');
+                this.trackingUpdatesEl = document.getElementById('tracking-updates');
+                
+                this.init();
+            }
+
+            async init() {
+                try {
+                    // Request microphone permission
+                    this.stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true,
+                            sampleRate: 44100
+                        }
+                    });
+                    this.setupMediaRecorder();
+                    this.setupEventListeners();
+                    this.startEmotionPolling();
+                    this.startStatsPolling();
+                    
+                    this.showAlert('Microphone access granted. System initialized successfully.', 'success');
+                    console.log('Enhanced Emotion AI initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showAlert('Failed to access microphone. Please check permissions and reload the page.', 'error');
+                }
+            }
+
+            setupMediaRecorder() {
+                const options = {
+                    mimeType: 'audio/webm;codecs=opus',
+                    audioBitsPerSecond: 128000
+                };
+                
+                try {
+                    this.mediaRecorder = new MediaRecorder(this.stream, options);
+                } catch (e) {
+                    this.mediaRecorder = new MediaRecorder(this.stream);
+                }
+                
+                this.mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        this.audioChunks.push(event.data);
+                    }
+                };
+                
+                this.mediaRecorder.onstop = () => {
+                    this.processRecording();
+                };
+
+                this.mediaRecorder.onstart = () => {
+                    console.log('MediaRecorder started');
+                };
+
+                this.mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder error:', event.error);
+                    this.showAlert('Recording error: ' + event.error.message, 'error');
+                };
+            }
+
+            setupEventListeners() {
+                // Mic button
+                this.micButton.addEventListener('click', () => {
+                    if (this.conversationStarted && !this.micButton.disabled && !this.isProcessing) {
+                        this.toggleRecording();
+                    }
+                });
+
+                // Control buttons
+                this.refreshVideoBtn.addEventListener('click', () => this.refreshVideo());
+                this.toggleOverlayBtn.addEventListener('click', () => this.toggleOverlay());
+                this.clearConversationBtn.addEventListener('click', () => this.clearConversation());
+                this.downloadConversationBtn.addEventListener('click', () => this.downloadConversation());
+                this.resetSessionBtn.addEventListener('click', () => this.resetSession());
+                this.viewStatsBtn.addEventListener('click', () => this.toggleStats());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && e.ctrlKey && this.conversationStarted) {
+                        e.preventDefault();
+                        this.toggleRecording();
+                    }
+                });
+
+                // Handle page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden && this.isRecording) {
+                        this.stopRecording();
+                        this.showAlert('Recording stopped due to page becoming inactive', 'info');
+                    }
+                });
+            }
+
+            startEmotionPolling() {
+                const pollInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch('/get_emotions');
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        this.updateEmotionDisplay(data);
+                        
+                        // Auto-start conversation when face detection is ready
+                        if (data.conversation_started && !this.conversationStarted) {
+                            this.startConversation(data);
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error fetching emotions:', error);
+                        if (this.conversationStarted) {
+                            this.updateDetectionStatus('Connection error', 'error');
+                        }
+                    }
+                }, 500); // Poll every 500ms
+
+                this.emotionPollInterval = pollInterval;
+            }
+
+            startStatsPolling() {
+                const pollInterval = setInterval(async () => {
+                    if (this.conversationStarted) {
+                        try {
+                            const response = await fetch('/get_session_stats');
+                            if (response.ok) {
+                                const stats = await response.json();
+                                this.updateStats(stats);
+                            }
+                        } catch (error) {
+                            console.error('Error fetching stats:', error);
+                        }
+                    }
+                }, 5000); // Poll stats every 5 seconds
+
+                this.statsPollInterval = pollInterval;
+            }
+
+            updateEmotionDisplay(data) {
+                // Update face emotion
+                if (data.face_emotion) {
+                    this.faceEmotionEl.textContent = data.face_emotion;
+                    this.faceEmotionEl.style.color = this.getEmotionColor(data.face_emotion);
+                }
+                
+                // Update face confidence
+                if (data.face_confidence !== undefined) {
+                    const confidence = (data.face_confidence * 100).toFixed(1);
+                    this.faceConfidenceEl.textContent = `Confidence: ${confidence}%`;
+                    this.faceConfidenceBar.style.width = `${confidence}%`;
+                }
+                
+                // Update voice emotion
+                if (data.voice_emotion && data.voice_emotion !== 'neutral') {
+                    this.voiceEmotionEl.textContent = data.voice_emotion;
+                    this.voiceEmotionEl.style.color = this.getEmotionColor(data.voice_emotion);
+                }
+                
+                // Update session ID display
+                if (data.session_id && data.session_id !== this.sessionId) {
+                    this.sessionIdEl.textContent = data.session_id.substring(8);
+                }
+                
+                // Update detection status
+                if (data.conversation_started) {
+                    this.updateDetectionStatus('Ready for conversation', 'ready');
+                } else {
+                    this.updateDetectionStatus('Detecting stable emotion', 'detecting');
+                }
+            }
+
+            updateStats(stats) {
+                this.messageCountEl.textContent = stats.conversation_count;
+                this.faceUpdatesEl.textContent = stats.face_emotion_updates;
+                this.mostFrequentEmotionEl.textContent = stats.most_frequent_emotion;
+                this.sessionDurationEl.textContent = stats.session_duration;
+                this.trackingUpdatesEl.textContent = stats.face_emotion_updates;
+            }
+
+            updateDetectionStatus(message, status) {
+                const statusEl = this.detectionStatus;
+                const indicatorClass = `status-${status}`;
+                
+                statusEl.innerHTML = `
+                    <span class="status-indicator ${indicatorClass}"></span>
+                    <span>${message}${status === 'detecting' ? '<span class="loading-dots"></span>' : ''}</span>
+                `;
+            }
+
+            getEmotionColor(emotion) {
+                const colors = {
+                    'happy': '#4CAF50',
+                    'sad': '#2196F3',
+                    'angry': '#f44336',
+                    'fear': '#9C27B0',
+                    'surprise': '#FF9800',
+                    'disgust': '#795548',
+                    'neutral': '#607D8B',
+                    'calm': '#00BCD4',
+                    'fearful': '#9C27B0'
+                };
+                return colors[emotion] || '#4CAF50';
+            }
+
+            async startConversation(data) {
+                this.conversationStarted = true;
+                this.sessionId = data.session_id;
+                this.sessionStartTime = new Date();
+                this.messageCount = 0;
+                
+                // Update UI elements
+                this.sessionIdEl.textContent = this.sessionId.substring(8);
+                this.enableControls();
+                this.startSessionTimer();
+                
+                // Show conversation area
+                this.conversationSection.style.display = 'block';
+                
+                // Update mic button and status
+                this.micButton.disabled = false;
+                this.micButton.classList.remove('disabled');
+                this.micStatus.innerHTML = 'Click microphone to start speaking<br><small>Ctrl+Space for keyboard shortcut</small>';
+                
+                this.showAlert('🎉 Face emotion detected! Conversation started. Face emotions will be tracked every 15 seconds.', 'success');
+                console.log('Conversation started with session:', this.sessionId);
+            }
+
+            enableControls() {
+                this.clearConversationBtn.disabled = false;
+                this.downloadConversationBtn.disabled = false;
+                this.resetSessionBtn.disabled = false;
+                this.viewStatsBtn.disabled = false;
+            }
+
+            startSessionTimer() {
+                this.sessionTimer = setInterval(() => {
+                    if (this.sessionStartTime) {
+                        const elapsed = new Date() - this.sessionStartTime;
+                        const minutes = Math.floor(elapsed / 60000);
+                        const seconds = Math.floor((elapsed % 60000) / 1000);
+                        this.sessionTimeEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+
+            toggleRecording() {
+                if (this.isRecording) {
+                    this.stopRecording();
+                } else {
+                    this.startRecording();
+                }
+            }
+
+            startRecording() {
+                if (!this.conversationStarted || this.isProcessing) return;
+                
+                try {
+                    this.audioChunks = [];
+                    this.mediaRecorder.start(1000);
+                    this.isRecording = true;
+                    
+                    this.micButton.classList.add('recording');
+                    this.micButton.classList.remove('disabled');
+                    this.micStatus.textContent = 'Recording... Click to stop';
+                    
+                    console.log('Recording started');
+                } catch (error) {
+                    console.error('Error starting recording:', error);
+                    this.showAlert('Failed to start recording: ' + error.message, 'error');
+                }
+            }
+
+            stopRecording() {
+                if (!this.isRecording) return;
+                
+                try {
+                    this.mediaRecorder.stop();
+                    this.isRecording = false;
+                    this.isProcessing = true;
+                    
+                    this.micButton.classList.remove('recording');
+                    this.micButton.classList.add('processing');
+                    this.micStatus.textContent = 'Processing audio...';
+                    
+                    console.log('Recording stopped');
+                } catch (error) {
+                    console.error('Error stopping recording:', error);
+                    this.showAlert('Error stopping recording: ' + error.message, 'error');
+                }
+            }
+
+            async processRecording() {
+                try {
+                    const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob, 'recording.webm');
+                    
+                    const response = await fetch('/process_audio', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Update voice emotion and confidence
+                    if (data.voice_emotion) {
+                        this.voiceEmotionEl.textContent = data.voice_emotion;
+                        this.voiceEmotionEl.style.color = this.getEmotionColor(data.voice_emotion);
+                        
+                        if (data.emotion_confidence !== undefined) {
+                            const confidence = (data.emotion_confidence * 100).toFixed(1);
+                            this.voiceConfidenceEl.textContent = `Confidence: ${confidence}%`;
+                            this.voiceConfidenceBar.style.width = `${confidence}%`;
+                        }
+                    }
+                    
+                    // Add conversation to history
+                    this.addConversationItem(data.user_message, data.bot_response, data);
+                    this.messageCount++;
+                    
+                    // Update conversation status
+                    this.conversationStatus.textContent = `${this.messageCount} messages`;
+                    
+                } catch (error) {
+                    console.error('Error processing audio:', error);
+                    this.showAlert('Error processing audio: ' + error.message, 'error');
+                } finally {
+                    // Reset UI state
+                    this.isProcessing = false;
+                    this.micButton.classList.remove('processing');
+                    this.micStatus.innerHTML = 'Click microphone to start speaking<br><small>Ctrl+Space for keyboard shortcut</small>';
+                    this.audioChunks = [];
+                }
+            }
+
+            addConversationItem(userMessage, botResponse, data) {
+                const timestamp = new Date().toLocaleTimeString();
+                
+                const userDiv = document.createElement('div');
+                userDiv.className = 'conversation-item user-message';
+                userDiv.innerHTML = `
+                    <div class="message-header">
+                        <span>You</span>
+                        <span class="message-time">${timestamp}</span>
+                    </div>
+                    <div>${userMessage}</div>
+                    <div class="message-emotions">
+                        Face: ${data.face_emotion} | Voice: ${data.voice_emotion} | Sentiment: ${data.sentiment.label}
+                    </div>
+                `;
+                
+                const botDiv = document.createElement('div');
+                botDiv.className = 'conversation-item bot-message';
+                botDiv.innerHTML = `
+                    <div class="message-header">
+                        <span>AI Assistant</span>
+                        <span class="message-time">${timestamp}</span>
+                    </div>
+                    <div>${botResponse}</div>
+                `;
+                
+                this.conversationHistory.appendChild(userDiv);
+                this.conversationHistory.appendChild(botDiv);
+                
+                // Scroll to bottom
+                this.conversationSection.scrollTop = this.conversationSection.scrollHeight;
+            }
+
+            refreshVideo() {
+                const videoFeed = document.getElementById('video-feed');
+                videoFeed.src = '/video_feed?' + new Date().getTime();
+                this.showAlert('Video feed refreshed', 'info');
+            }
+
+            toggleOverlay() {
+                const overlay = document.getElementById('video-overlay');
+                this.overlayVisible = !this.overlayVisible;
+                overlay.style.display = this.overlayVisible ? 'block' : 'none';
+                this.toggleOverlayBtn.textContent = this.overlayVisible ? '👁️ Hide Overlay' : '👁️ Show Overlay';
+            }
+
+            toggleStats() {
+                this.statsVisible = !this.statsVisible;
+                this.statsSection.style.display = this.statsVisible ? 'grid' : 'none';
+                this.viewStatsBtn.textContent = this.statsVisible ? '📊 Hide Stats' : '📊 Show Stats';
+            }
+
+            async clearConversation() {
+                if (!confirm('Are you sure you want to clear the conversation history?')) return;
+                
+                try {
+                    const response = await fetch('/clear_conversation', {
+                        method: 'POST'
+                    });
+                    
+                    if (response.ok) {
+                        this.conversationHistory.innerHTML = '';
+                        this.messageCount = 0;
+                        this.messageCountEl.textContent = '0';
+                        this.conversationStatus.textContent = 'Ready';
+                        this.showAlert('Conversation cleared successfully', 'success');
+                    } else {
+                        throw new Error('Failed to clear conversation');
+                    }
+                } catch (error) {
+                    console.error('Error clearing conversation:', error);
+                    this.showAlert('Error clearing conversation: ' + error.message, 'error');
+                }
+            }
+
+            async downloadConversation() {
+                try {
+                    const response = await fetch('/download_data');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const dataStr = JSON.stringify(data, null, 2);
+                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                        
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(dataBlob);
+                        link.download = `emotion_session_${this.sessionId}.json`;
+                        link.click();
+                        
+                        this.showAlert('Session data downloaded successfully', 'success');
+                    } else {
+                        throw new Error('Failed to download data');
+                    }
+                } catch (error) {
+                    console.error('Error downloading data:', error);
+                    this.showAlert('Error downloading data: ' + error.message, 'error');
+                }
+            }
+
+            async resetSession() {
+                if (!confirm('Are you sure you want to reset the entire session? This will clear all data.')) return;
+                
+                try {
+                    const response = await fetch('/reset_session', {
+                        method: 'POST'
+                    });
+                    
+                    if (response.ok) {
+                        // Reset UI state
+                        this.conversationStarted = false;
+                        this.sessionId = null;
+                        this.messageCount = 0;
+                        this.faceUpdateCount = 0;
+                        this.sessionStartTime = null;
+                        
+                        // Clear timers
+                        if (this.sessionTimer) {
+                            clearInterval(this.sessionTimer);
+                            this.sessionTimer = null;
+                        }
+                        
+                        // Reset UI elements
+                        this.conversationHistory.innerHTML = '';
+                        this.conversationSection.style.display = 'none';
+                        this.statsSection.style.display = 'none';
+                        this.statsVisible = false;
+                        
+                        this.sessionIdEl.textContent = 'Not Started';
+                        this.messageCountEl.textContent = '0';
+                        this.faceUpdatesEl.textContent = '0';
+                        this.sessionTimeEl.textContent = '00:00';
+                        
+                        this.micButton.disabled = true;
+                        this.micButton.classList.add('disabled');
+                        this.micStatus.textContent = 'Waiting for face detection to complete...';
+                        
+                        this.clearConversationBtn.disabled = true;
+                        this.downloadConversationBtn.disabled = true;
+                        this.resetSessionBtn.disabled = true;
+                        this.viewStatsBtn.disabled = true;
+                        
+                        this.showAlert('Session reset successfully', 'success');
+                        
+                        // Reload the page to restart everything
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        throw new Error('Failed to reset session');
+                    }
+                } catch (error) {
+                    console.error('Error resetting session:', error);
+                    this.showAlert('Error resetting session: ' + error.message, 'error');
+                }
+            }
+
+            showAlert(message, type = 'info') {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                
+                document.body.appendChild(alertDiv);
+                
+                // Remove alert after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new EmotionAI();
+        });
+    </script>
+</body>
+</html>
